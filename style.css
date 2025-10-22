@@ -1,0 +1,9 @@
+body {
+    text-align: center; /* Centra el contenido */
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+}
+#juegoCanvas {
+    border: 3px solid green; /* Borde al área de juego */
+    background-color: #000000; /* Fondo oscuro (calle/alcantarilla) */
+}
