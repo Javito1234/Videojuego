@@ -2,17 +2,24 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>TMNT Runner Web</title>
-    <link rel="stylesheet" href="style.css"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TMNT Runner - Tortugas Ninja</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>¡Go Ninja, Go!</h1>
-    
-    <canvas id="juegoCanvas" width="800" height="400">
-        Tu navegador no soporta Canvas.
-    </canvas>
+    <div class="container">
+        <h1>🐢 Tortugas Ninja Runner 🐢</h1>
+        <p class="subtitle">¡Go Ninja, Go!</p>
+        
+        <canvas id="juegoCanvas" width="800" height="400">
+            Tu navegador no soporta Canvas.
+        </canvas>
+        
+        <div class="instructions">
+            <p><strong>Controles:</strong> Espacio / Flecha Arriba / Click / Tap para saltar</p>
+        </div>
+    </div>
 
-    <script src="jquery-3.7.1.js"></script> 
-    <script src="game.js"></script> 
+    <script src="game.js"></script>
 </body>
 </html>
