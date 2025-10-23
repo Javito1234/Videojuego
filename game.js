@@ -10,6 +10,14 @@ window.addEventListener('load', () => {
     const CANVAS_H = canvas.height;
     const GROUND_Y = CANVAS_H - 40; // línea del suelo
 
+    // Tortugas disponibles
+    const turtles = {
+        leonardo: { name: 'Leonardo', bandana: '#1e90ff', weapon: 'Katanas' },
+        raphael: { name: 'Raphael', bandana: '#ff0000', weapon: 'Sais' },
+        donatello: { name: 'Donatello', bandana: '#9370db', weapon: 'Bo' },
+        michelangelo: { name: 'Michelangelo', bandana: '#ff7300', weapon: 'Nunchakus' }
+    };
+
     // Jugador (Tortuga)
     const player = {
         x: 60,
@@ -21,7 +29,8 @@ window.addEventListener('load', () => {
         jumpForce: -0.6, // px per ms
         isOnGround: true,
         color: '#2ecc71', // verde tortuga
-        bandana: '#ff7300ff' // color de la banda
+        bandana: '#ff7300', // color de la banda (default Michelangelo)
+        selectedTurtle: 'michelangelo'
     };
 
     // Obstáculos
@@ -216,4 +225,5 @@ window.addEventListener('load', () => {
     // Iniciar primer frame
     lastTime = performance.now();
     requestAnimationFrame(loop);
+
 });
