@@ -1,124 +1,146 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TMNT Runner - Tortugas Ninja</title>
-    <link rel="stylesheet" href="style.css">
-</head><!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TMNT Runner - Tortugas Ninja</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🐢 TMNT Runner + PHP & SQL Viewer 🐢</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* Estilos base adicionales */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background: #111;
+      color: #fff;
+      text-align: center;
+    }
+    h1 {
+      color: #00ff90;
+    }
+    iframe {
+      width: 90%;
+      height: 200px;
+      border: 1px solid #333;
+      border-radius: 8px;
+      background: #222;
+    }
+    pre {
+      width: 90%;
+      margin: 10px auto;
+      background: #222;
+      padding: 15px;
+      border-radius: 6px;
+      text-align: left;
+      overflow-x: auto;
+      color: #0f0;
+    }
+    section {
+      margin-top: 40px;
+      padding: 20px;
+      border-top: 2px solid #333;
+    }
+    .subtitle {
+      color: #aaa;
+      margin-bottom: 20px;
+    }
+  </style>
 </head>
 <body>
-    <!-- Pantalla de Login/Registro -->
-    <div id="authScreen" class="auth-screen">
-        <div class="auth-container">
-            <h1>🐢 Tortugas Ninja Runner 🐢</h1>
-            <p class="subtitle">¡Go Ninja, Go!</p>
-            
-            <div id="loginForm" class="auth-form">
-                <h2>Iniciar Sesión</h2>
-                <input type="text" id="loginUsername" placeholder="Usuario" autocomplete="username">
-                <input type="password" id="loginPassword" placeholder="Contraseña" autocomplete="current-password">
-                <button onclick="login()">Entrar</button>
-                <p class="switch-form">¿No tienes cuenta? <a href="#" onclick="showRegister(); return false;">Regístrate</a></p>
-                <div id="loginError" class="error-message"></div>
-            </div>
-            
-            <div id="registerForm" class="auth-form" style="display: none;">
-                <h2>Registrarse</h2>
-                <input type="text" id="regUsername" placeholder="Usuario" autocomplete="username">
-                <input type="email" id="regEmail" placeholder="Email" autocomplete="email">
-                <input type="password" id="regPassword" placeholder="Contraseña" autocomplete="new-password">
-                
-                <div class="turtle-selection">
-                    <p><strong>Selecciona tu tortuga favorita:</strong></p>
-                    <div class="turtle-options">
-                        <label class="turtle-option">
-                            <input type="radio" name="regTurtle" value="leonardo">
-                            <span class="turtle-badge" style="background: #1e90ff;">Leonardo</span>
-                        </label>
-                        <label class="turtle-option">
-                            <input type="radio" name="regTurtle" value="raphael">
-                            <span class="turtle-badge" style="background: #ff0000;">Raphael</span>
-                        </label>
-                        <label class="turtle-option">
-                            <input type="radio" name="regTurtle" value="donatello">
-                            <span class="turtle-badge" style="background: #9370db;">Donatello</span>
-                        </label>
-                        <label class="turtle-option">
-                            <input type="radio" name="regTurtle" value="michelangelo" checked>
-                            <span class="turtle-badge" style="background: #ff7300;">Michelangelo</span>
-                        </label>
-                    </div>
-                </div>
-                
-                <button onclick="register()">Registrarse</button>
-                <p class="switch-form">¿Ya tienes cuenta? <a href="#" onclick="showLogin(); return false;">Inicia sesión</a></p>
-                <div id="registerError" class="error-message"></div>
-            </div>
-        </div>
-    </div>
 
-    <!-- Pantalla del Juego -->
-    <div id="gameScreen" class="container" style="display: none;">
-        <div class="user-info">
-            <span id="userDisplay"></span>
-            <button onclick="showLeaderboard()" class="btn-secondary">🏆 Ranking</button>
-            <button onclick="logout()" class="btn-logout">Cerrar Sesión</button>
-        </div>
-        
-        <h1>🐢 Tortugas Ninja Runner 🐢</h1>
-        <p class="subtitle">¡Go Ninja, Go!</p>
-        
-        <canvas id="juegoCanvas" width="800" height="400">
-            Tu navegador no soporta Canvas.
-        </canvas>
-        
-        <div class="instructions">
-            <p><strong>Controles:</strong> Espacio / Flecha Arriba / Click / Tap para saltar</p>
-        </div>
-    </div>
+  <!-- ==================== -->
+  <!-- SECCIÓN PRINCIPAL DEL JUEGO -->
+  <!-- ==================== -->
+  <section id="gameSection">
+    <h1>🐢 Tortugas Ninja Runner 🐢</h1>
+    <p class="subtitle">¡Go Ninja, Go!</p>
 
-    <!-- Modal de Leaderboard -->
-    <div id="leaderboardModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeLeaderboard()">&times;</span>
-            <h2>🏆 Tabla de Puntuaciones</h2>
-            
-            <div id="userRanking" class="user-ranking"></div>
-            
-            <div id="leaderboardContent" class="leaderboard-content">
-                <p>Cargando...</p>
-            </div>
-            
-            <button onclick="closeLeaderboard()" class="btn-secondary">Cerrar</button>
-        </div>
-    </div>
+    <canvas id="juegoCanvas" width="800" height="400">
+      Tu navegador no soporta Canvas.
+    </canvas>
 
-    <script src="api.js"></script>
-    <script src="game.js"></script>
+    <div class="instructions">
+      <p><strong>Controles:</strong> Espacio / Flecha Arriba / Click / Tap para saltar</p>
+    </div>
+  </section>
+
+  <!-- ==================== -->
+  <!-- SECCIÓN PHP -->
+  <!-- ==================== -->
+  <section id="phpSection">
+    <h2>📄 Ver Archivo PHP</h2>
+    <p>Este iframe ejecuta el archivo <code>config.php</code> desde tu servidor local.</p>
+    <iframe src="config.php"></iframe>
+  </section>
+
+   <section id="phpSection">
+    <h2>📄 Ver Archivo PHP</h2>
+    <p>Este iframe ejecuta el archivo <code>register.php</code> desde tu servidor local.</p>
+    <iframe src="register.php"></iframe>
+  </section>
+
+   <section id="phpSection">
+    <h2>📄 Ver Archivo PHP</h2>
+    <p>Este iframe ejecuta el archivo <code>login.php</code> desde tu servidor local.</p>
+    <iframe src="login.php"></iframe>
+  </section>
+
+   <section id="phpSection">
+    <h2>📄 Ver Archivo PHP</h2>
+    <p>Este iframe ejecuta el archivo <code>logout.php</code> desde tu servidor local.</p>
+    <iframe src="logout.php"></iframe>
+  </section>
+
+   <section id="phpSection">
+    <h2>📄 Ver Archivo PHP</h2>
+    <p>Este iframe ejecuta el archivo <code>save_score.php</code> desde tu servidor local.</p>
+    <iframe src="save_score.php"></iframe>
+  </section>
+
+   <section id="phpSection">
+    <h2>📄 Ver Archivo PHP</h2>
+    <p>Este iframe ejecuta el archivo <code>leaderboard.php</code> desde tu servidor local.</p>
+    <iframe src="leaderboard.php"></iframe>
+  </section>
+
+   <section id="phpSection">
+    <h2>📄 Ver Archivo PHP</h2>
+    <p>Este iframe ejecuta el archivo <code>update_turtle.php</code> desde tu servidor local.</p>
+    <iframe src="update_turtle.php"></iframe>
+  </section>
+
+   <section id="phpSection">
+    <h2>📄 Ver Archivo PHP</h2>
+    <p>Este iframe ejecuta el archivo <code>config.php</code> desde tu servidor local.</p>
+    <iframe src="check_session.php"></iframe>
+  </section>
+
+
+
+  <!-- ==================== -->
+  <!-- SECCIÓN SQL -->
+  <!-- ==================== -->
+  <section id="sqlSection">
+    <h2>💾 Ver Contenido del Archivo SQL</h2>
+    <p>El contenido del archivo <code>database.sql</code> se muestra como texto (no se ejecuta).</p>
+    <pre id="contenido-sql">Cargando contenido SQL...</pre>
+  </section>
+
+  <!-- ==================== -->
+  <!-- SCRIPTS -->
+  <!-- ==================== -->
+  <script src="jquery-3.7.1.js"></script>
+  <script src="api.js"></script>
+  <script src="game.js"></script>
+  <script>
+    // Mostrar contenido del archivo SQL
+    fetch("script.sql")
+      .then(res => res.text())
+      .then(sql => {
+        document.getElementById("contenido-sql").innerText = sql;
+      })
+      .catch(() => {
+        document.getElementById("contenido-sql").innerText = "Error al cargar script.sql";
+      });
+  </script>
 </body>
 </html>
-<body>
-    <div class="container">
-        <h1>🐢 Tortugas Ninja Runner 🐢</h1>
-        <p class="subtitle">¡Go Ninja, Go!</p>
-        
-        <canvas id="juegoCanvas" width="800" height="400">
-            Tu navegador no soporta Canvas.
-        </canvas>
-        
-        <div class="instructions">
-            <p><strong>Controles:</strong> Espacio / Flecha Arriba / Click / Tap para saltar</p>
-        </div>
-    </div>
-
-    <script src="game.js"></script>
-</body>
-</html>
-

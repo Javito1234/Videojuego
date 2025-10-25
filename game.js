@@ -1,5 +1,5 @@
 // Juego estilo "Chrome Dino" con temática Tortugas Ninja
-// Implementación completa en un solo archivo: canvas, jugador, obstáculos, salto, puntaje y reinicio.
+// Implementación completa: canvas, jugador, obstáculos, salto, puntaje y reinicio.
 
 window.addEventListener('load', () => {
     const canvas = document.getElementById('juegoCanvas');
@@ -46,9 +46,11 @@ window.addEventListener('load', () => {
     let lastTime = 0;
     let running = true;
     let score = 0;
+    let showMenu = true; // mostrar menú de selección al inicio
 
     // Controles
     function jump() {
+        if (showMenu) return; // no saltar si está en el menú
         if (player.isOnGround && running) {
             player.vy = player.jumpForce;
             player.isOnGround = false;
@@ -58,16 +60,72 @@ window.addEventListener('load', () => {
         }
     }
 
+    function selectTurtle(turtleName) {
+        if (showMenu && turtles[turtleName]) {
+            player.selectedTurtle = turtleName;
+            player.bandana = turtles[turtleName].bandana;
+            showMenu = false;
+            running = true;
+            lastTime = performance.now();
+        }
+    }
+
     document.addEventListener('keydown', (e) => {
         if (e.code === 'Space' || e.code === 'ArrowUp') {
             e.preventDefault();
             jump();
         }
+        // Selección con teclas numéricas en el menú
+        if (showMenu) {
+            if (e.code === 'Digit1') selectTurtle('leonardo');
+            if (e.code === 'Digit2') selectTurtle('raphael');
+            if (e.code === 'Digit3') selectTurtle('donatello');
+            if (e.code === 'Digit4') selectTurtle('michelangelo');
+        }
     });
 
     // Soporte táctil / click
-    canvas.addEventListener('mousedown', () => jump());
-    canvas.addEventListener('touchstart', (e) => { e.preventDefault(); jump(); }, {passive: false});
+    canvas.addEventListener('mousedown', (e) => {
+        if (showMenu) {
+            handleMenuClick(e);
+        } else {
+            jump();
+        }
+    });
+    canvas.addEventListener('touchstart', (e) => { 
+        e.preventDefault(); 
+        if (showMenu) {
+            handleMenuClick(e.touches[0]);
+        } else {
+            jump();
+        }
+    }, {passive: false});
+
+    // Manejar clicks en el menú
+    function handleMenuClick(e) {
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        
+        // Detectar click en las cajas de tortugas (2x2 grid)
+        const boxW = 160, boxH = 120;
+        const startX = (CANVAS_W - boxW * 2 - 40) / 2;
+        const startY = 120;
+        const gap = 20;
+        
+        const turtleKeys = Object.keys(turtles);
+        for (let i = 0; i < 4; i++) {
+            const col = i % 2;
+            const row = Math.floor(i / 2);
+            const bx = startX + col * (boxW + gap);
+            const by = startY + row * (boxH + gap);
+            
+            if (x >= bx && x <= bx + boxW && y >= by && y <= by + boxH) {
+                selectTurtle(turtleKeys[i]);
+                break;
+            }
+        }
+    }
 
     // Spawnear obstáculos
     function spawnObstacle() {
@@ -90,11 +148,11 @@ window.addEventListener('load', () => {
         speed = 0.35;
         score = 0;
         running = true;
+        showMenu = true; // volver al menú
         player.y = GROUND_Y - player.height;
         player.vy = 0;
         player.isOnGround = true;
         lastTime = performance.now();
-        requestAnimationFrame(loop);
     }
 
     // Colisiones AABB
@@ -145,6 +203,10 @@ window.addEventListener('load', () => {
         ctx.font = '20px Arial';
         ctx.textAlign = 'left';
         ctx.fillText('Puntuación: ' + Math.floor(score), 12, 28);
+        
+        // Mostrar tortuga seleccionada
+        ctx.font = '16px Arial';
+        ctx.fillText(turtles[player.selectedTurtle].name, 12, 52);
     }
 
     function drawGameOver(ctx) {
@@ -153,9 +215,86 @@ window.addEventListener('load', () => {
         ctx.fillStyle = '#fff';
         ctx.font = '36px Arial';
         ctx.textAlign = 'center';
-        ctx.fillText('¡Game Over!', CANVAS_W/2, CANVAS_H/2 - 10);
+        ctx.fillText('¡Game Over!', CANVAS_W/2, CANVAS_H/2 - 30);
+        ctx.font = '24px Arial';
+        ctx.fillText('Puntuación: ' + Math.floor(score), CANVAS_W/2, CANVAS_H/2 + 10);
         ctx.font = '18px Arial';
-        ctx.fillText('Presiona Espacio o toca para reiniciar', CANVAS_W/2, CANVAS_H/2 + 20);
+        ctx.fillText('Presiona Espacio o toca para volver al menú', CANVAS_W/2, CANVAS_H/2 + 45);
+    }
+
+    function drawMenu(ctx) {
+        // Fondo
+        ctx.fillStyle = '#111';
+        ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
+        
+        // Título
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 32px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText('Selecciona tu Tortuga Ninja', CANVAS_W/2, 60);
+        
+        // Grid 2x2 de tortugas
+        const boxW = 160, boxH = 120;
+        const startX = (CANVAS_W - boxW * 2 - 40) / 2;
+        const startY = 120;
+        const gap = 20;
+        
+        const turtleKeys = Object.keys(turtles);
+        turtleKeys.forEach((key, i) => {
+            const turtle = turtles[key];
+            const col = i % 2;
+            const row = Math.floor(i / 2);
+            const x = startX + col * (boxW + gap);
+            const y = startY + row * (boxH + gap);
+            
+            // Caja
+            ctx.fillStyle = '#333';
+            ctx.fillRect(x, y, boxW, boxH);
+            ctx.strokeStyle = turtle.bandana;
+            ctx.lineWidth = 3;
+            ctx.strokeRect(x, y, boxW, boxH);
+            
+            // Mini tortuga
+            const turtleW = 40, turtleH = 40;
+            const tx = x + (boxW - turtleW) / 2;
+            const ty = y + 15;
+            
+            // cuerpo
+            ctx.fillStyle = '#2ecc71';
+            ctx.fillRect(tx, ty, turtleW, turtleH);
+            
+            // caparazón
+            ctx.fillStyle = '#27ae60';
+            ctx.beginPath();
+            ctx.ellipse(tx + turtleW/2, ty + turtleH/2, turtleW*0.6, turtleH*0.45, 0, 0, Math.PI*2);
+            ctx.fill();
+            
+            // banda
+            ctx.fillStyle = turtle.bandana;
+            ctx.fillRect(tx + 5, ty + 8, turtleW - 10, 6);
+            
+            // Nombre
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 16px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(turtle.name, x + boxW/2, ty + turtleH + 25);
+            
+            // Arma
+            ctx.font = '12px Arial';
+            ctx.fillStyle = '#aaa';
+            ctx.fillText(turtle.weapon, x + boxW/2, ty + turtleH + 42);
+            
+            // Número
+            ctx.fillStyle = turtle.bandana;
+            ctx.font = 'bold 14px Arial';
+            ctx.fillText((i + 1).toString(), x + 10, y + 20);
+        });
+        
+        // Instrucciones
+        ctx.fillStyle = '#fff';
+        ctx.font = '16px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText('Haz clic en una tortuga o presiona 1-4', CANVAS_W/2, CANVAS_H - 40);
     }
 
     // Bucle principal
@@ -166,6 +305,13 @@ window.addEventListener('load', () => {
 
         // Limpiar
         ctx.clearRect(0, 0, CANVAS_W, CANVAS_H);
+
+        // Si estamos en el menú, solo dibujarlo
+        if (showMenu) {
+            drawMenu(ctx);
+            requestAnimationFrame(loop);
+            return;
+        }
 
         if (running) {
             // Actualizar jugador (física simple)
@@ -225,5 +371,4 @@ window.addEventListener('load', () => {
     // Iniciar primer frame
     lastTime = performance.now();
     requestAnimationFrame(loop);
-
 });
